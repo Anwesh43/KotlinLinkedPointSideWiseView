@@ -30,7 +30,13 @@ class PointSideWiseView (ctx : Context) : View(ctx) {
 
         fun update(stopcb : (Float) -> Unit) {
             scale += 0.1f * dir
-            if ()
+            if (Math.abs(scale - prevScale) > 1) {
+                scale = prevScale + dir
+                dir = 0f
+                prevScale = scale
+                stopcb(scale)
+
+            }
         }
 
         fun startUpdating(startcb : () -> Unit) {
@@ -39,5 +45,34 @@ class PointSideWiseView (ctx : Context) : View(ctx) {
                 startcb()
             }
         }
+    }
+
+    data class Animator(var view : View, var animated : Boolean = false) {
+
+        fun animate(updatecb : () -> Unit) {
+            if (animated) {
+                updatecb()
+                try {
+                    Thread.sleep(50)
+                    view.invalidate()
+                } catch (ex : Exception) {
+
+                }
+            }
+        }
+
+        fun start() {
+            if (!animated) {
+                animated = true
+                view.postInvalidate()
+            }
+        }
+
+        fun stop() {
+            if (animated) {
+                animated = false
+            }
+        }
+
     }
 }
