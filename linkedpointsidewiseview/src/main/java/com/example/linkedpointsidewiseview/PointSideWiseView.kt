@@ -4,6 +4,7 @@ package com.example.linkedpointsidewiseview
  * Created by anweshmishra on 25/05/18.
  */
 
+import android.app.Activity
 import android.view.View
 import android.content.Context
 import android.view.MotionEvent
@@ -177,6 +178,13 @@ class PointSideWiseView (ctx : Context) : View(ctx) {
                 animator.start()
             }
         }
+    }
 
+    companion object {
+        fun create(activity : Activity) : PointSideWiseView {
+            val view : PointSideWiseView = PointSideWiseView(activity)
+            activity.setContentView(view)
+            return view 
+        }
     }
 }
