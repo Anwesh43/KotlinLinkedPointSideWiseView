@@ -153,4 +153,28 @@ class PointSideWiseView (ctx : Context) : View(ctx) {
             curr.startUpdating(startcb)
         }
     }
+
+    data class Renderer (var view : PointSideWiseView) {
+
+        private val animator : Animator = Animator(view)
+
+        private val pointedSideWise : LinkedPointSideWise = LinkedPointSideWise(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#212121"))
+            pointedSideWise.draw(canvas, paint)
+            animator.animate {
+                pointedSideWise.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            pointedSideWise.startUpdating {
+                animator.start()
+            }
+        }
+
+    }
 }
