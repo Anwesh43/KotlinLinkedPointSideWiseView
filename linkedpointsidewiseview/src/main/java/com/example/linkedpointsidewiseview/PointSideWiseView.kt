@@ -20,9 +20,24 @@ class PointSideWiseView (ctx : Context) : View(ctx) {
     override fun onTouchEvent(event : MotionEvent) : Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                
+
             }
         }
         return true
+    }
+
+    data class State(var scale : Float = 0f, var dir : Float = 0f, var prevScale : Float = 0f) {
+
+        fun update(stopcb : (Float) -> Unit) {
+            scale += 0.1f * dir
+            if ()
+        }
+
+        fun startUpdating(startcb : () -> Unit) {
+            if (dir == 0f) {
+                dir = 1 - 2 * prevScale
+                startcb()
+            }
+        }
     }
 }
