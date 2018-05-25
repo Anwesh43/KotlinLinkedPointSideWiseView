@@ -129,4 +129,28 @@ class PointSideWiseView (ctx : Context) : View(ctx) {
             return this
         }
     }
+
+    data class LinkedPointSideWise (var i : Int) {
+
+        var curr : PSWNode = PSWNode(0)
+
+        var dir : Int = 1
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            curr.draw(canvas, paint)
+        }
+
+        fun update(stopcb : (Float) -> Unit) {
+            curr.update { scale ->
+                curr = curr.getNext(dir) {
+                    this.dir *= -1
+                }
+                stopcb(scale)
+            }
+        }
+
+        fun startUpdating(startcb : () -> Unit) {
+            curr.startUpdating(startcb)
+        }
+    }
 }
