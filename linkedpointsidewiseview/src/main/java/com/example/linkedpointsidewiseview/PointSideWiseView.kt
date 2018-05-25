@@ -9,6 +9,7 @@ import android.view.View
 import android.content.Context
 import android.view.MotionEvent
 import android.graphics.*
+import android.util.Log
 
 val PSW_NODES : Int = 6
 
@@ -90,6 +91,7 @@ class PointSideWiseView (ctx : Context) : View(ctx) {
             if (i < PSW_NODES - 1) {
                 next = PSWNode(i + 1)
                 next?.prev = this
+                next?.addNeighbor()
             }
         }
 
@@ -97,9 +99,9 @@ class PointSideWiseView (ctx : Context) : View(ctx) {
             paint.color = Color.parseColor("#e67e22")
             val w : Float = canvas.width.toFloat()
             val h : Float = canvas.height.toFloat()
-            val gap : Float = (h / 2 * PSW_NODES + 1)
+            val gap : Float = h / (2 * PSW_NODES + 1)
             val size : Float = w/10
-            val x : Float = (1 - i%2) * (-size) * state.scale + (w + size) * (1 - state.scale) * i%2
+            val x : Float = ((1 - i%2) * ((-size) * (1 - state.scale))) + ((w + ((size) * (1 - state.scale))) * (i%2))
             prev?.draw(canvas, paint)
             canvas.save()
             canvas.translate(x, 3 * gap/2 + i * 2 * gap)
@@ -138,6 +140,9 @@ class PointSideWiseView (ctx : Context) : View(ctx) {
         var curr : PSWNode = PSWNode(0)
 
         var dir : Int = 1
+        init {
+            curr.addNeighbor()
+        }
 
         fun draw(canvas : Canvas, paint : Paint) {
             curr.draw(canvas, paint)
@@ -184,7 +189,7 @@ class PointSideWiseView (ctx : Context) : View(ctx) {
         fun create(activity : Activity) : PointSideWiseView {
             val view : PointSideWiseView = PointSideWiseView(activity)
             activity.setContentView(view)
-            return view 
+            return view
         }
     }
 }
