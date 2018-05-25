@@ -9,6 +9,8 @@ import android.content.Context
 import android.view.MotionEvent
 import android.graphics.*
 
+val PSW_NODES : Int = 6
+
 class PointSideWiseView (ctx : Context) : View(ctx) {
 
     private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -73,6 +75,58 @@ class PointSideWiseView (ctx : Context) : View(ctx) {
                 animated = false
             }
         }
+    }
 
+    data class PSWNode (var i : Int, val state : State = State()) {
+
+        var next : PSWNode? = null
+
+        var prev : PSWNode? = null
+
+        fun addNeighbor() {
+            if (i < PSW_NODES - 1) {
+                next = PSWNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            paint.color = Color.parseColor("#e67e22")
+            val w : Float = canvas.width.toFloat()
+            val h : Float = canvas.height.toFloat()
+            val gap : Float = (h / 2 * PSW_NODES + 1)
+            val size : Float = w/10
+            val x : Float = (1 - i%2) * (-size) * state.scale + (w + size) * (1 - state.scale) * i%2
+            prev?.draw(canvas, paint)
+            canvas.save()
+            canvas.translate(x, 3 * gap/2 + i * 2 * gap)
+            val path = Path()
+            path.moveTo(0f, -gap/2)
+            path.lineTo(0f, gap/2)
+            path.lineTo(size * (1 - 2 * (i%2)), 0f)
+            path.lineTo(0f, -gap/2)
+            canvas.drawPath(path, paint)
+            canvas.restore()
+        }
+
+        fun update(stopcb : (Float) -> Unit) {
+            state.update(stopcb)
+        }
+
+        fun startUpdating(startcb : () -> Unit) {
+            state.startUpdating(startcb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : PSWNode {
+            var curr : PSWNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
+        }
     }
 }
