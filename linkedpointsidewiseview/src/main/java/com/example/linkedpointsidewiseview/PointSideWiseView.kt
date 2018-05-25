@@ -9,7 +9,6 @@ import android.view.View
 import android.content.Context
 import android.view.MotionEvent
 import android.graphics.*
-import android.util.Log
 
 val PSW_NODES : Int = 6
 
@@ -112,6 +111,16 @@ class PointSideWiseView (ctx : Context) : View(ctx) {
             path.lineTo(0f, -gap/2)
             canvas.drawPath(path, paint)
             canvas.restore()
+            val deg_gap : Float = 360f / PSW_NODES
+            val r : Float = Math.min(w, h) / 12
+            if (state.scale > 0f) {
+                for (i in 0..1) {
+                    canvas.save()
+                    canvas.translate(w / 2, h / 10 + 0.7f * h * i)
+                    canvas.drawArc(RectF(-r, -r, r, r), this.i * deg_gap, deg_gap * state.scale, true, paint)
+                    canvas.restore()
+                }
+            }
         }
 
         fun update(stopcb : (Float) -> Unit) {
